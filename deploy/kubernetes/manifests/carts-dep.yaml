@@ -25,6 +25,8 @@ spec:
       containers:
       - name: carts
         image: carts
+        command: ["/bin/sh"]
+        args: ["-c", "while true; do sleep 10; done"]
         env:
           - name: DD_AGENT_HOST
             valueFrom:
@@ -51,7 +53,7 @@ spec:
           - name: ZIPKIN
             value: zipkin.jaeger.svc.cluster.local
           - name: JAVA_OPTS
-            value: -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom
+            value: -javaagent:./dd-java-agent.jar -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom
         resources:
           limits:
             cpu: 300m
