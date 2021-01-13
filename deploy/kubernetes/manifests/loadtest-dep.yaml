@@ -10,6 +10,9 @@ metadata:
   name: load-test
   labels:
     name: load-test
+    tags.datadoghq.com/env: "production"
+    tags.datadoghq.com/service: "loadtest"
+    tags.datadoghq.com/version: "v1"
   namespace: loadtest
 spec:
   replicas: 2
@@ -17,10 +20,36 @@ spec:
     metadata:
       labels:
         name: load-test
+        tags.datadoghq.com/env: "production"
+        tags.datadoghq.com/service: "loadtest"
+        tags.datadoghq.com/version: "v1"
     spec:
       containers:
       - name: load-test
         image: load-test
+        env:
+          - name: DD_AGENT_HOST
+            valueFrom:
+              fieldRef:
+                fieldPath: status.hostIP
+          - name: DD_ENV
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.labels['tags.datadoghq.com/env']
+          - name: DD_SERVICE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.labels['tags.datadoghq.com/service']
+          - name: DD_VERSION
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.labels['tags.datadoghq.com/version']
+          - name: DD_PROFILING_ENABLED
+            value: "true"
+          - name: DD_LOGS_INJECTION
+            value: "true"
+          - name: DD_TRACE_SAMPLE_RATE
+            value: "1"
         command: ["/bin/sh"]
         args: ["-c", "while true; do locust --host http://front-end.sock-shop.svc.cluster.local -f /config/locustfile.py --clients 5 --hatch-rate 5 --num-request 100 --no-web; done"]
       nodeSelector:
