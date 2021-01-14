@@ -1,30 +1,35 @@
 ---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: loadtest
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: payment
+  name: load-test
   labels:
-    name: payment
+    name: load-test
     tags.datadoghq.com/env: "production"
-    tags.datadoghq.com/service: "payment"
+    tags.datadoghq.com/service: "loadtest"
     tags.datadoghq.com/version: "v1"
-  namespace: sock-shop
+  namespace: loadtest
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
-      name: payment
+      name: load-test
   template:
     metadata:
       labels:
-        name: payment
+        name: load-test
         tags.datadoghq.com/env: "production"
-        tags.datadoghq.com/service: "payment"
+        tags.datadoghq.com/service: "loadtest"
         tags.datadoghq.com/version: "v1"
     spec:
       containers:
-      - name: payment
-        image: payment
+      - name: load-test
+        image: load-test
         env:
           - name: DD_AGENT_HOST
             valueFrom:
@@ -48,35 +53,7 @@ spec:
             value: "true"
           - name: DD_TRACE_SAMPLE_RATE
             value: "1"
-        resources:
-          limits:
-            cpu: 100m
-            memory: 100Mi
-          requests:
-            cpu: 99m
-            memory: 100Mi
-        ports:
-        - containerPort: 80
-        securityContext:
-          runAsNonRoot: true
-          runAsUser: 10001
-          capabilities:
-            drop:
-              - all
-            add:
-              - NET_BIND_SERVICE
-          readOnlyRootFilesystem: true
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 80
-          initialDelaySeconds: 300
-          periodSeconds: 3
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 80
-          initialDelaySeconds: 180
-          periodSeconds: 3
+        command: ["/bin/sh"]
+        args: ["-c", "while true; do locust --host http://front-end.sock-shop.svc.cluster.local -f /config/locustfile.py --users 5 --spawn-rate 5 --headless; done"]
       nodeSelector:
         beta.kubernetes.io/os: linux

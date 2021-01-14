@@ -2,29 +2,28 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: catalogue
-  labels:
-    name: catalogue
-    tags.datadoghq.com/env: "production"
-    tags.datadoghq.com/service: "catalogue"
-    tags.datadoghq.com/version: "v1"
+  name: front-end
   namespace: sock-shop
+  labels:
+    tags.datadoghq.com/env: "production"
+    tags.datadoghq.com/service: "front-end"
+    tags.datadoghq.com/version: "v1"
 spec:
   replicas: 1
   selector:
     matchLabels:
-      name: catalogue
+      name: front-end
   template:
     metadata:
       labels:
-        name: catalogue
+        name: front-end
         tags.datadoghq.com/env: "production"
-        tags.datadoghq.com/service: "catalogue"
+        tags.datadoghq.com/service: "front-end"
         tags.datadoghq.com/version: "v1"
     spec:
       containers:
-      - name: catalogue
-        image: catalogue
+      - name: front-end
+        image: front-end
         env:
           - name: DD_AGENT_HOST
             valueFrom:
@@ -48,38 +47,36 @@ spec:
             value: "true"
           - name: DD_TRACE_SAMPLE_RATE
             value: "1"
-        command: ["/app"]
-        args:
-        - -port=80
         resources:
           limits:
-            cpu: 100m
-            memory: 100Mi
+            cpu: 300m
+            memory: 1000Mi
           requests:
             cpu: 100m
-            memory: 100Mi
+            memory: 300Mi
         ports:
-        - containerPort: 80
+        - containerPort: 8079
+        env:
+        - name: SESSION_REDIS
+          value: "true"
         securityContext:
           runAsNonRoot: true
           runAsUser: 10001
           capabilities:
             drop:
               - all
-            add:
-              - NET_BIND_SERVICE
           readOnlyRootFilesystem: true
         livenessProbe:
           httpGet:
-            path: /health
-            port: 80
-          initialDelaySeconds: 300
+            path: /
+            port: 8079
+          initialDelaySeconds: 10
           periodSeconds: 3
         readinessProbe:
           httpGet:
-            path: /health
-            port: 80
-          initialDelaySeconds: 180
+            path: /
+            port: 8079
+          initialDelaySeconds: 10
           periodSeconds: 3
       nodeSelector:
         beta.kubernetes.io/os: linux

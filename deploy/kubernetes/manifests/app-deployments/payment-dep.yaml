@@ -2,29 +2,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: user
+  name: payment
   labels:
-    name: user
+    name: payment
     tags.datadoghq.com/env: "production"
-    tags.datadoghq.com/service: "user"
+    tags.datadoghq.com/service: "payment"
     tags.datadoghq.com/version: "v1"
   namespace: sock-shop
 spec:
   replicas: 1
   selector:
     matchLabels:
-      name: user
+      name: payment
   template:
     metadata:
       labels:
-        name: user
+        name: payment
         tags.datadoghq.com/env: "production"
-        tags.datadoghq.com/service: "user"
+        tags.datadoghq.com/service: "payment"
         tags.datadoghq.com/version: "v1"
     spec:
       containers:
-      - name: user
-        image: user
+      - name: payment
+        image: payment
         env:
           - name: DD_AGENT_HOST
             valueFrom:
@@ -50,16 +50,13 @@ spec:
             value: "1"
         resources:
           limits:
-            cpu: 300m
+            cpu: 100m
             memory: 100Mi
           requests:
-            cpu: 100m
+            cpu: 99m
             memory: 100Mi
         ports:
         - containerPort: 80
-        env:
-        - name: mongo
-          value: user-db:27017
         securityContext:
           runAsNonRoot: true
           runAsUser: 10001
@@ -72,14 +69,14 @@ spec:
         livenessProbe:
           httpGet:
             path: /health
-            port: 80
-          initialDelaySeconds: 300
+            port: 8080
+          initialDelaySeconds: 10
           periodSeconds: 3
         readinessProbe:
           httpGet:
             path: /health
-            port: 80
-          initialDelaySeconds: 180
+            port: 8080
+          initialDelaySeconds: 10
           periodSeconds: 3
       nodeSelector:
         beta.kubernetes.io/os: linux
