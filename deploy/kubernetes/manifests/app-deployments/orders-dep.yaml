@@ -61,10 +61,10 @@ spec:
         resources:
           limits:
             cpu: 500m
-            memory: 750Mi
+            memory: 950Mi
           requests:
             cpu: 200m
-            memory: 700Mi
+            memory: 900Mi
         ports:
         - containerPort: 80
         # securityContext:

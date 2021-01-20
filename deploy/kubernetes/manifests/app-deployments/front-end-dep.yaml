@@ -25,6 +25,8 @@ spec:
       - name: front-end
         image: front-end
         env:
+          - name: DD_TRACE_AGENT_PORT
+            value: "8126"
           - name: DD_AGENT_HOST
             valueFrom:
               fieldRef:
@@ -47,6 +49,8 @@ spec:
             value: "true"
           - name: DD_TRACE_SAMPLE_RATE
             value: "1"
+          - name: SESSION_REDIS
+            value: "true"
         resources:
           limits:
             cpu: 300m
@@ -56,9 +60,6 @@ spec:
             memory: 300Mi
         ports:
         - containerPort: 8079
-        env:
-        - name: SESSION_REDIS
-          value: "true"
         securityContext:
           runAsNonRoot: true
           runAsUser: 10001
