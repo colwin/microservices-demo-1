@@ -5,6 +5,9 @@ metadata:
   name: catalogue-db
   labels:
     name: catalogue-db
+    tags.datadoghq.com/env: "production"
+    tags.datadoghq.com/service: "catalogue-db"
+    tags.datadoghq.com/version: "v1"
   namespace: sock-shop
 spec:
   replicas: 1
@@ -15,10 +18,13 @@ spec:
     metadata:
       labels:
         name: catalogue-db
+        tags.datadoghq.com/env: "production"
+        tags.datadoghq.com/service: "catalogue-db"
+        tags.datadoghq.com/version: "v1"
       annotations:
-        ad.datadoghq.com/catalogue-db.check_names: 'mysql'
-        ad.datadoghq.com/catalogue-db.init_configs: '{}'
-        ad.datadoghq.com/catalogue-db.instances: '{"server": "%%host%%", "user": "datadog","pass": "datadogmetrics"}'
+        ad.datadoghq.com/catalogue-db.check_names: '["mysql"]'
+        ad.datadoghq.com/catalogue-db.init_configs: '[{}]'
+        ad.datadoghq.com/catalogue-db.instances: '[{"server": "%%host%%", "user": "datadog","pass": "datadogmetrics"}]'
     spec:
       containers:
       - name: catalogue-db
