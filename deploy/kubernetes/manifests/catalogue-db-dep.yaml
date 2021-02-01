@@ -15,6 +15,10 @@ spec:
     metadata:
       labels:
         name: catalogue-db
+      annotations:
+        ad.datadoghq.com/catalogue-db.check_names: 'mysql'
+        ad.datadoghq.com/catalogue-db.init_configs: '{}'
+        ad.datadoghq.com/catalogue-db.instances: '{"server": "%%host%%", "user": "datadog","pass": "datadogmetrics"}'
     spec:
       containers:
       - name: catalogue-db
