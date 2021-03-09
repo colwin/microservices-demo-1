@@ -54,6 +54,8 @@ spec:
           - name: DD_TRACE_SAMPLE_RATE
             value: "1"
         command: ["/bin/sh"]
-        args: ["-c", "while true; do locust --host http://front-end.sock-shop.svc.cluster.local -f /config/locustfile.py --users 5 --spawn-rate 5 --headless; done"]
+        args: ["-c", "while true; do locust --host http://a7c1ef240574d4a95b7db0854556f397-1203325574.us-east-1.elb.amazonaws.com -f /config/locustfile.py --users 2 --spawn-rate 5 --headless; done"]
+        #args: ["-c", "while true; do locust --host http://front-end.sock-shop.svc.cluster.local -f /config/locustfile.py --users 5 --spawn-rate 5 --headless; done"]
+
       nodeSelector:
         beta.kubernetes.io/os: linux
