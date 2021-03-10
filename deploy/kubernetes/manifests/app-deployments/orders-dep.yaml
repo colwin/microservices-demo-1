@@ -51,7 +51,7 @@ spec:
           - name: ZIPKIN
             value: zipkin.jaeger.svc.cluster.local
           - name: JAVA_OPTS
-            value: -javaagent:./dd-java-agent.jar -Ddd.profiling.enabled=true -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom
+            value: -javaagent:./dd-java-agent.jar -Ddd.profiling.enabled=true -XX:FlightRecorderOptions=stackdepth=256 -Xms64m -Xmx128m -XX:PermSize=32m -XX:MaxPermSize=64m -XX:+UseG1GC -Djava.security.egd=file:/dev/urandom
           - name: DOTNET_NOLOGO
             value: "1"
           - name: DOTNET_CLI_HOME
